@@ -1,0 +1,10 @@
+[package]
+name = "drand"
+version = "0.1.0"
+authors = ["Victor Lopez <victor@codx.io>"]
+edition = "2021"
+license = "MIT/Apache-2.0"
+repository = "https://github.com/codx-dev/drand"
+description = "A distributed randomness beacon client."
+
+[dependencies]
