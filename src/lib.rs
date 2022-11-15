@@ -1,13 +1,22 @@
 mod chain;
+mod randomness;
+
+pub mod prelude {
+    pub use crate::chain::{Chain, ChainInfo};
+    pub use crate::randomness::{Randomness, VerifiedRandomness};
+    pub use crate::{Drand, DrandError};
+}
 
 use crate::chain::{retrieve_info, Chain};
 
 use std::error::Error;
-use std::fmt::{Display, Error as FmtError, Formatter};
+use std::fmt::{self, Display, Formatter};
 
 use drand_verify::VerificationError;
 use hex::FromHexError;
 use serde_json::Value;
+
+pub type Result<T> = std::result::Result<T, DrandError>;
 
 const ENDPOINT: &str = "https://drand.cloudflare.com";
 const LEAGUE_OF_ENTROPY_HASH: &str =
@@ -34,7 +43,7 @@ pub enum DrandError {
 
 impl Drand {
     /// Get available chains from `drand.cloudflare.com/chains`
-    pub async fn available_chains() -> Result<Self, DrandError> {
+    pub async fn available_chains() -> Result<Self> {
         let url = format!("{}/{}", ENDPOINT, "chains");
         let value = reqwest::get(url).await?;
         let json = value.json::<Value>().await?;
@@ -59,7 +68,7 @@ impl Drand {
 
     /// Get the League of Entropy drand group
     /// https://drand.love/developer/http-api/#public-endpoints
-    pub async fn loe_drand_chain() -> Result<Self, DrandError> {
+    pub async fn loe_drand_chain() -> Result<Self> {
         let hash = String::from(LEAGUE_OF_ENTROPY_HASH);
         let info = retrieve_info(&hash).await?;
 
@@ -96,7 +105,7 @@ impl From<FromHexError> for DrandError {
 }
 
 impl Display for DrandError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), FmtError> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let x = match self {
             Self::RequestError(err) => format!("Reqwest error: {}", err),
             Self::InvalidResponse(err) => format!("Invalid response: {}", err),
