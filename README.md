@@ -3,7 +3,7 @@
 This is a drand client made for rust. It uses reqwest for sending HTTP requests and gets randomness data from the Drand API. It allows performing verification using
 the (drand-verify)[https://github.com/CosmWasm/drand-verify] crate. 
 
-To access an available chain from the API (https://drand.cloudfare.com/chains)
+To access an available chain from the API (https://drand.cloudflare.com/chains)
 ```rust
 use drand::Drand;
 
@@ -24,6 +24,6 @@ async fn main() {
 
 `chain.latest()` will give you just `Randomness` which is unverified randomness. 
 
-# LICENSE
+## LICENSE
 
 
