@@ -1,7 +1,7 @@
 # Drand Client
 
 This is a drand client made for rust. It uses reqwest for sending HTTP requests and gets randomness data from the Drand API. It allows performing verification using
-the (drand-verify)[https://github.com/CosmWasm/drand-verify] crate. 
+the [drand-verify](https://github.com/noislabs/drand-verify) crate. 
 
 To access an available chain from the API (https://drand.cloudflare.com/chains)
 ```rust
