@@ -11,7 +11,7 @@ pub(crate) struct Randomness {
     pub previous_signature: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct VerifiedRandomness {
     pub round: u64,
     pub public_key: [u8; 48],

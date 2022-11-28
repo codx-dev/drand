@@ -15,15 +15,13 @@ async fn main() {
 
     let chain = drand.chains.remove(0); // drand.chains is a Vec<Chains> to interact with chains 
 
-    let latest = chain.latest().await.expect("Failed to retrieve info"); // get the latest round of randmoness from the chain
- 
-    let verified_randmoness = latest.verify(chain.info).expect("Cannot verify").unwrap(); // verified randomness
+    let latest = chain.latest().await.expect("Failed to retrieve info").unwrap(); // get the latest round of verified randmoness from the chain
 }
 
 ```
 
-`chain.latest()` will give you just `Randomness` which is unverified randomness. 
+`chain.latest()` will give you `Result<OptionVerifiedRandomness>>` which is verified autoamtically, unverified randomnesses are not supported. If there's an error in verification then the error the propogated using the `drand::DrandError` enum.
 
 ## LICENSE
 
-
+MIT
