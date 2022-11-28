@@ -7,7 +7,7 @@ pub mod prelude {
     pub use crate::{Drand, DrandError};
 }
 
-use crate::chain::{retrieve_info, Chain};
+use crate::chain::{Chain, ChainInfo};
 
 use std::error::Error;
 use std::fmt::{self, Display, Formatter};
@@ -44,7 +44,12 @@ pub enum DrandError {
 impl Drand {
     /// Get available chains from `drand.cloudflare.com/chains`
     pub async fn available_chains() -> Result<Self> {
-        let url = format!("{}/{}", ENDPOINT, "chains");
+        Self::with_endpoint(ENDPOINT).await
+    }
+
+    /// Use custom endpoint, query `endpoint/chains` for chains
+    pub async fn with_endpoint(endpoint: &str) -> Result<Self> {
+        let url = format!("{}/{}", endpoint, "chains");
         let value = reqwest::get(url).await?;
         let json = value.json::<Value>().await?;
 
@@ -54,7 +59,7 @@ impl Drand {
             // No combinators because it's easier to deal with in async code
             for chain in arr {
                 if let Value::String(hash) = chain {
-                    let info = retrieve_info(&hash).await?;
+                    let info = retrieve_info_with_endpoint(endpoint, &hash).await?;
 
                     chains.push(Chain { hash, info })
                 }
@@ -78,6 +83,19 @@ impl Drand {
             chains: vec![chain],
         })
     }
+}
+
+/// Get request to get info for the hash.
+pub(crate) async fn retrieve_info(hash: &str) -> Result<ChainInfo> {
+    retrieve_info_with_endpoint(ENDPOINT, hash).await
+}
+
+pub(crate) async fn retrieve_info_with_endpoint(endpoint: &str, hash: &str) -> Result<ChainInfo> {
+    let url = format!("{}/{}/{}", endpoint, hash, "info");
+    let value = reqwest::get(url).await?;
+    let info: ChainInfo = value.json().await?;
+
+    Ok(info)
 }
 
 impl From<reqwest::Error> for DrandError {

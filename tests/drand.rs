@@ -43,3 +43,21 @@ async fn test_specific_round() {
     // round is set by serialising, make sure we are at 3
     assert_eq!(latest.round, 3);
 }
+
+#[tokio::test]
+async fn test_specific_endpoint() {
+    let mut drand = Drand::with_endpoint("https://api.drand.sh")
+        .await
+        .expect("Cannot find available chains");
+
+    let chain = drand.chains.remove(0);
+
+    let latest = chain
+        .round(3)
+        .await
+        .expect("Failed to retrieve info")
+        .unwrap();
+
+    // round is set by serialising, make sure we are at 3
+    assert_eq!(latest.round, 3);
+}

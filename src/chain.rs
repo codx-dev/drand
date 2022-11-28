@@ -48,12 +48,3 @@ impl Chain {
         randomness.verify(&self.info)
     }
 }
-
-/// Get request to get info for the hash.
-pub(crate) async fn retrieve_info(hash: &str) -> Result<ChainInfo> {
-    let url = format!("{}/{}/{}", ENDPOINT, hash, "info");
-    let value = reqwest::get(url).await?;
-    let info: ChainInfo = value.json().await?;
-
-    Ok(info)
-}
