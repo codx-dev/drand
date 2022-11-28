@@ -10,7 +10,7 @@ async fn test_available_chains_latest() {
 
     let latest = chain.latest().await.expect("Failed to retrieve info");
 
-    latest.verify(chain.info).expect("Cannot verify").unwrap();
+    latest.expect("Cannot get verified randomness");
 }
 
 #[tokio::test]
@@ -23,7 +23,7 @@ async fn test_league_of_entropy_drand() {
 
     let latest = chain.latest().await.expect("Failed to retrieve info");
 
-    latest.verify(chain.info).expect("Cannot verify").unwrap();
+    latest.expect("Cannot get verified randomness");
 }
 
 #[tokio::test]
@@ -34,10 +34,12 @@ async fn test_specific_round() {
 
     let chain = drand.chains.remove(0);
 
-    let latest = chain.round(3).await.expect("Failed to retrieve info");
+    let latest = chain
+        .round(3)
+        .await
+        .expect("Failed to retrieve info")
+        .unwrap();
 
-    // round is set by serialising, make sure we are
+    // round is set by serialising, make sure we are at 3
     assert_eq!(latest.round, 3);
-
-    latest.verify(chain.info).expect("Cannot verify").unwrap();
 }

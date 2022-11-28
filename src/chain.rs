@@ -1,3 +1,4 @@
+use crate::randomness::Randomness;
 use crate::ENDPOINT;
 use crate::{prelude::*, Result};
 
@@ -23,18 +24,18 @@ pub struct ChainInfo {
 impl Chain {
     /// Get latest round of randomness
     /// https://drand.love/developer/http-api/#chain-hash-public-latest
-    pub async fn latest(&self) -> Result<Randomness> {
+    pub async fn latest(&self) -> Result<Option<VerifiedRandomness>> {
         let url = format!("{}/{}/{}/{}", ENDPOINT, self.hash, "public", "latest");
         let value = reqwest::get(url).await?;
 
         let randomness: Randomness = value.json().await?;
 
-        Ok(randomness)
+        randomness.verify(&self.info)
     }
 
     /// Get a specific round of randomness from the network. Round 0 gets the
     /// latest round
-    pub async fn round(&self, round: usize) -> Result<Randomness> {
+    pub async fn round(&self, round: usize) -> Result<Option<VerifiedRandomness>> {
         if round == 0 {
             return self.latest().await;
         }
@@ -44,7 +45,7 @@ impl Chain {
 
         let randomness: Randomness = value.json().await?;
 
-        Ok(randomness)
+        randomness.verify(&self.info)
     }
 }
 

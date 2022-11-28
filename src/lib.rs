@@ -3,7 +3,7 @@ mod randomness;
 
 pub mod prelude {
     pub use crate::chain::{Chain, ChainInfo};
-    pub use crate::randomness::{Randomness, VerifiedRandomness};
+    pub use crate::randomness::VerifiedRandomness;
     pub use crate::{Drand, DrandError};
 }
 
